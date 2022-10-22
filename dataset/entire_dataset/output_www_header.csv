@@ -1,0 +1,1 @@
+www:ID;author:string[];author-bibtex:string[];cite:string[];crossref:string;editor:string[];ee:string;key:string;mdate:date;note:string[];note-label:string[];note-type:string[];publtype:string;title:string[];url:string[];url-type:string[];year:int
