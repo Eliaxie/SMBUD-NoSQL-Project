@@ -1,1 +1,8 @@
 **:Zone.Identifier
+dataset/entire_dataset/output_article.csv
+dataset/entire_dataset/output_article.zip
+dataset/entire_dataset/output_author_authored_by.csv
+dataset/entire_dataset/output_author_authored_by.zip
+dataset/entire_dataset/output_inproceedings.csv
+dataset/entire_dataset/output_inproceedings.zip
+dataset/entire_dataset/output_www.csv
