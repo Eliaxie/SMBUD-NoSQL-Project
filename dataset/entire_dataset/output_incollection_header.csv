@@ -1,1 +1,0 @@
-incollection:ID;author:string[];author-orcid:string[];booktitle:string;cdrom:string;chapter:int;cite:string[];cite-label:string[];crossref:string;ee:string[];ee-type:string[];i:string[];key:string;mdate:date;note:string;number:string;pages:string;publisher:string;publisher-href:string;publtype:string;sub:string[];sup:string[];title:string;url:string;year:int
