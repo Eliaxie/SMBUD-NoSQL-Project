@@ -1,4 +1,4 @@
-//upload_authors
+//upload_dataset
 CALL apoc.load.json("file:///articles.json") YIELD value AS entry
 MERGE (p:Article:Publication {id:entry.id})
 SET p.title = entry.title, p.year = entry.year
@@ -20,3 +20,21 @@ UNWIND authors AS author
 MERGE (a:Author {id:author.id})
 SET a.name = author.name, a.affiliation = author.org
 MERGE (a)-[:WRITES]->(p);
+
+//upload_conferences_journals
+CALL apoc.load.json("file:///articles.json") YIELD value AS entry
+MERGE (v:Venue {name:entry.venue.raw})
+WITH v, entry.venue.type AS type
+WHERE type = "C"
+SET v:Conference;
+
+CALL apoc.load.json("file:///articles.json") YIELD value AS entry
+MERGE (v:Venue {name:entry.venue.raw})
+WITH v, entry.venue.type AS type
+WHERE type = "J"
+SET v:Journal;
+
+MATCH (v:Venue)
+WHERE NOT v:Conference
+SET v:JOURNAL;
+
