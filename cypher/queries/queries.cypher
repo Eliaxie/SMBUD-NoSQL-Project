@@ -43,3 +43,27 @@ MATCH (f:FieldOfStudy {name:'Artificial intelligence'})<-[c:COVERS_FIELD]-(:Arti
 WITH COUNT(c) AS articles, v, max
 WHERE articles = max
 RETURN collect({venue:v.name, articles:articles})
+
+// 6) Find the shortest path (with general relations) between an author and a conference in which the author never wrote a publication for
+MATCH 
+(au:Author)-[:WRITES]->(ar:Article)-[:PUBLISHED_IN]->(cx:Conference),(cy:Conference),
+p = shortestpath((au)-[*]-(cy))
+WHERE cy <> cx
+RETURN p LIMIT 1
+
+
+// 7) Find the best Organizations per field of study (based on # of articles)
+
+MATCH (f:FieldOfStudy)<-[:COVERS_FIELD]-(:Publication)<-[:WRITES]-(:Author)-[:AFFILIATED_TO]->(o:Organization)
+WITH f,o,count(*) as c
+WITH collect({Organization:o.name,Publications:c}) AS tuple,f
+WITH collect({field:f.name,tuple:tuple}) as col
+UNWIND col AS elem
+WITH elem AS e
+UNWIND e.tuple AS t
+WITH max(t) AS m,e
+RETURN e.field AS FieldOfStudy, m AS TOP_RESULT
+ORDER BY FieldOfStudy ASC
+
+
+
