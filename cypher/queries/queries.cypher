@@ -103,12 +103,20 @@ WHERE citations = max_citations
 RETURN DISTINCT o
 
 
-// 11) Find the shortest path (with general relations) between an author and a conference in which the author never wrote a publication for
-MATCH 
-(au:Author)-[:WRITES]->(ar:Article)-[:PUBLISHED_IN]->(cx:Conference),(cy:Conference),
-p = shortestpath((au)-[*]-(cy))
-WHERE cy <> cx
-RETURN p LIMIT 1
+// 11) Find the shortest path between two authors, who never have been coauthors. They must share the same highest field of study coverage for their publications.
+
+MATCH (a1:Author)-[:WRITES]->(p1:Publication)-[:COVERS_FIELD]->(f1:FieldOfStudy),
+    (a2:Author)-[:WRITES]->(p2:Publication)-[:COVERS_FIELD]->(f2:FieldOfStudy)
+WHERE p1 <> p2
+WITH DISTINCT count(f1) AS cnt1, count(f2) AS cnt2, a1,a2
+WITH max(cnt1) AS field1, max(cnt2) AS field2,a1,a2
+MATCH (a1)-[:WRITES]->(p1:Publication)-[:COVERS_FIELD]->(f1:FieldOfStudy),
+    (a2)-[:WRITES]->(p2:Publication)-[:COVERS_FIELD]->(f2:FieldOfStudy)
+WHERE p1 <> p2
+WITH DISTINCT count(f1) AS cnt1, count(f2) AS cnt2, a1,a2,field1,field2
+WHERE cnt1 = field1 AND cnt2 = field2
+MATCH p = shortestpath((a1)-[*]-(a2))
+RETURN p
 
 
 // 12) Find the best Organizations per field of study (based on # of articles)
@@ -123,3 +131,5 @@ UNWIND e.tuple AS t
 WITH max(t) AS m,e
 RETURN e.field AS FieldOfStudy, m AS TOP_RESULT
 ORDER BY FieldOfStudy ASC
+
+
