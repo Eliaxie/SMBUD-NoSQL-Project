@@ -66,6 +66,7 @@ WITH COUNT(DISTINCT r) AS references, p
 RETURN AVG(references) AS average_number_of_references
 
 // 8. Find the top 3 publishers by number of published conference articles (who must reference at least 10 other publications) covering a specific field
+
 MATCH (:Publication)<-[r:REFERENCES]-(a:Article)-[:COVERS_FIELD]->(:FieldOfStudy {name:'Computer science'})
 MATCH (a)-[:PUBLISHED_IN]->(:Conference)
 WITH COUNT(r) AS references, a
@@ -103,23 +104,7 @@ WHERE citations = max_citations
 RETURN DISTINCT o
 
 
-// 11) Find the shortest path between two authors, who never have been coauthors. They must share the same highest field of study coverage for their publications.
-
-MATCH (a1:Author)-[:WRITES]->(p1:Publication)-[:COVERS_FIELD]->(f1:FieldOfStudy),
-    (a2:Author)-[:WRITES]->(p2:Publication)-[:COVERS_FIELD]->(f2:FieldOfStudy)
-WHERE p1 <> p2
-WITH DISTINCT count(f1) AS cnt1, count(f2) AS cnt2, a1,a2
-WITH max(cnt1) AS field1, max(cnt2) AS field2,a1,a2
-MATCH (a1)-[:WRITES]->(p1:Publication)-[:COVERS_FIELD]->(f1:FieldOfStudy),
-    (a2)-[:WRITES]->(p2:Publication)-[:COVERS_FIELD]->(f2:FieldOfStudy)
-WHERE p1 <> p2
-WITH DISTINCT count(f1) AS cnt1, count(f2) AS cnt2, a1,a2,field1,field2
-WHERE cnt1 = field1 AND cnt2 = field2
-MATCH p = shortestpath((a1)-[*]-(a2))
-RETURN p
-
-
-// 12) Find the best Organizations per field of study (based on # of articles)
+// 11) Find the best Organizations per field of study (based on # of articles)
 
 MATCH (f:FieldOfStudy)<-[:COVERS_FIELD]-(:Publication)<-[:WRITES]-(:Author)-[:AFFILIATED_TO]->(o:Organization)
 WITH f,o,count(*) as c
@@ -132,4 +117,18 @@ WITH max(t) AS m,e
 RETURN e.field AS FieldOfStudy, m AS TOP_RESULT
 ORDER BY FieldOfStudy ASC
 
+// 12) Find the shortest path between two authors, who never have been coauthors. They must share the same highest field of study coverage for their publications and the path must be composed of authors and articles.
 
+MATCH (a1:Author)-[:WRITES]->(p1:Publication)-[:COVERS_FIELD]->(f1:FieldOfStudy),
+    (a2:Author)-[:WRITES]->(p2:Publication)-[:COVERS_FIELD]->(f2:FieldOfStudy)
+WHERE p1 <> p2
+WITH DISTINCT COUNT(f1) AS cnt1, COUNT(f2) AS cnt2, a1,a2
+WITH MAX(cnt1) AS field1, MAX(cnt2) AS field2,a1,a2
+MATCH (a1)-[:WRITES]->(p1:Publication)-[:COVERS_FIELD]->(f1:FieldOfStudy),
+    (a2)-[:WRITES]->(p2:Publication)-[:COVERS_FIELD]->(f2:FieldOfStudy)
+WHERE p1 <> p2
+WITH DISTINCT COUNT(f1) AS cnt1, COUNT(f2) AS cnt2, a1,a2,field1,field2
+WHERE cnt1 = field1 AND cnt2 = field2
+MATCH p = shortestpath((a1)-[*]-(a2))
+WHERE all(x IN nodes(p) WHERE "Publication" IN labels(x) OR "Author" IN labels(x))
+RETURN p LIMIT 1
