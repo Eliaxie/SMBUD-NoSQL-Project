@@ -9,3 +9,5 @@ dataset/entire_dataset/output_www.csv
 dataset/for_smbud_2/.Rhistory
 dataset/.DS_Store
 *.docx#
+**node_modules/
+**dist/
