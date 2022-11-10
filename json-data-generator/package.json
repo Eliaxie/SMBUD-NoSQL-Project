@@ -1,24 +1,3 @@
-{
-  "name": "node_project",
-  "version": "1.0.0",
-  "description": "",
-  "main": "dist/app.js",
-  "scripts": {
-    "start": "tsc && node dist/app.js",
-    "lint": "eslint . --ext .ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@types/express": "^4.17.1",
-    "@typescript-eslint/eslint-plugin": "^5.4.0",
-    "@typescript-eslint/parser": "^5.4.0",
-    "eslint": "^8.3.0",
-    "typescript": "^4.5.2"
-  },
-  "dependencies": {
-    "axios": "^1.1.3"
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:26ca49d62223713d20d4bebe7050771c70cbf4a63d45a18d62be2880b0b05692
+size 610

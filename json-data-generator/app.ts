@@ -1,4 +1,5 @@
-var fs = require("fs");
+const fs = require("fs");
+const crypto = require('crypto');
 import axios, { AxiosRequestConfig, AxiosPromise } from 'axios';
 /// https://baconipsum.com/api/?type=all-meat&paras=100
 ///
@@ -15,7 +16,6 @@ async function generate(howMany: number){
         console.log(`minimum ${20} docs`)
     }
     console.log("Fetching...")
-    var writeStream = fs.createWriteStream("documents.json");
     let documents: Article[] = [];
     let authors_data = (await axios({
         method: 'get',
@@ -52,18 +52,23 @@ async function generate(howMany: number){
         headers: {}
     })).data
 
+    for (let index = 0; index < howMany; index++) {
+        authors_data.id = index
+        publishers_data.id = index
+    }
+
     console.log("Generating...")
 
     for (let index = 0; index < howMany; index++) {
         let authors: Author[] = []
-        let num_authors = getRandomInt(10);
+        let num_authors = getRandomInt(9) + 1;
         for (let index = 0; index < num_authors; index++) {
             let range = Math.floor(howMany / num_authors)
             let low_bound = index * range;
             authors.push(authors_data[low_bound + getRandomInt(range)])
         }
         let publishers: Publisher[] = []
-        let num_publisher = getRandomInt(20);
+        let num_publisher = getRandomInt(19) + 1;
         for (let index = 0; index < num_publisher; index++) {
             let range = Math.floor(howMany / num_publisher)
             let low_bound = index * range;
@@ -82,7 +87,7 @@ async function generate(howMany: number){
         let sections: Section[] = generateSection(figures, titles, howMany, text_raw);
 
         let doc: Article = {
-            "id": doc_gen[index].id,
+            "id": index,
             "title": doc_gen[index].title,
             "abstract": doc_gen[index].abstract,
             "metadata": {
@@ -103,24 +108,27 @@ async function generate(howMany: number){
             documents[index].bibliography.push(documents[low_bound + getRandomInt(range)].id);
         }
     }
+    var writeStream = fs.createWriteStream("documents.json");
     writeStream.write(JSON.stringify(documents));
     writeStream.end();
 }
 
 function getRandomInt(max: number) {
-    return Math.floor(Math.random() * max);
+    const buf = crypto.randomInt(max);
+    return buf
 }
 
-function generateSubsectionRecursive(figures_data: any, titles: any, text_raw: string[], howMany: number, probability_to_continue: number): SectionBody[] | undefined {
-    if( Math.random() > probability_to_continue ){
+function generateSubsectionRecursive(figures_data: any, titles: any, text_raw: string[], howMany: number, probability_to_continue: number, level: number): SectionBody[] | undefined {
+    if( Math.random() > (Math.pow(probability_to_continue, Math.pow(level, 2))) ){
         return undefined
     } else {
         var section_bodies: SectionBody[] = []
-        for (let index = 0; index < 10; index++) {
+        var num_section_bodies = getRandomInt(19) + 1;
+        for (let index = 0; index < num_section_bodies; index++) {
             let section_body: SectionBody = {
                 "title": titles[getRandomInt(howMany)].title,
                 "text": text_raw[getRandomInt(howMany)].split("  "),
-                "sub_section": generateSubsectionRecursive(figures_data, titles, text_raw, howMany, probability_to_continue)
+                "sub_section": generateSubsectionRecursive(figures_data, titles, text_raw, howMany, probability_to_continue, level + 1)
             }
             section_bodies.push(section_body);
         }
@@ -139,12 +147,13 @@ function generateSection(figures_data: any, titles: any, howMany: number, text_r
         }
         figures.push(figure)
     }
-    for (let index = 0; index < 10; index++) {
+    let num_sections = getRandomInt(19) + 1
+    for (let index = 0; index < num_sections; index++) {
         let section: Section = {
             "body_text": {
                 "title": titles[getRandomInt(howMany)],
                 "text": text_raw[getRandomInt(howMany)].split("  "),
-                "sub_section": generateSubsectionRecursive(figures_data, titles, text_raw, howMany, 0.05)
+                "sub_section": generateSubsectionRecursive(figures_data, titles, text_raw, howMany, 0.5, 1)
             },
             figures: figures
         }
