@@ -5,7 +5,8 @@ interface Article
     "abstract": string
     "authors": Author[],
     "metadata": {
-        "creation_date": Date | undefined
+        "creation_date": Date | undefined,
+        "keywords": string[]
     },
     "publication_details": Publisher[],
     "sections": Section[],

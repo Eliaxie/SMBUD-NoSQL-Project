@@ -1,6 +1,7 @@
 const fs = require("fs");
 const crypto = require('crypto');
 import axios, { AxiosRequestConfig, AxiosPromise } from 'axios';
+import { Console } from 'console';
 /// https://baconipsum.com/api/?type=all-meat&paras=100
 ///
 /// doc generalities: curl "https://api.mockaroo.com/api/f463f250?count=1000&key=0167ee30"
@@ -8,6 +9,8 @@ import axios, { AxiosRequestConfig, AxiosPromise } from 'axios';
 /// pub details: curl "https://api.mockaroo.com/api/512c3fc0?count=1000&key=0167ee30"
 /// title: curl "https://api.mockaroo.com/api/e2c22890?count=1000&key=0167ee30"
 /// figures: curl "https://api.mockaroo.com/api/2cb545d0?count=1000&key=0167ee30"
+
+const API_KEY= "0167ee30"
 
 generate(1000)
 
@@ -19,22 +22,22 @@ async function generate(howMany: number){
     let documents: Article[] = [];
     let authors_data = (await axios({
         method: 'get',
-        url: `https://api.mockaroo.com/api/5e6b06c0?count=${howMany}&key=0167ee30`,
+        url: `https://api.mockaroo.com/api/5e6b06c0?count=${howMany}&key=${API_KEY}`,
         headers: {}
     })).data
     let doc_gen = (await axios({
         method: 'get',
-        url: `https://api.mockaroo.com/api/f463f250?count=${howMany}&key=0167ee30`,
+        url: `https://api.mockaroo.com/api/f463f250?count=${howMany}&key=${API_KEY}`,
         headers: {}
     })).data
     let publishers_data = (await axios({
         method: 'get',
-        url: `https://api.mockaroo.com/api/512c3fc0?count=${howMany}&key=0167ee30`,
+        url: `https://api.mockaroo.com/api/512c3fc0?count=${howMany}&key=${API_KEY}`,
         headers: {}
     })).data
     let figures = (await axios({
         method: 'get',
-        url: `https://api.mockaroo.com/api/2cb545d0?count=${howMany}&key=0167ee30`,
+        url: `https://api.mockaroo.com/api/2cb545d0?count=${howMany}&key=${API_KEY}`,
         headers: {}
     })).data
     let text_raw: string[] = [];
@@ -48,7 +51,7 @@ async function generate(howMany: number){
     }
     let titles = (await axios({
         method: 'get',
-        url: `https://api.mockaroo.com/api/e2c22890?count=${howMany}&key=0167ee30`,
+        url: `https://api.mockaroo.com/api/e2c22890?count=${howMany}&key=${API_KEY}`,
         headers: {}
     })).data
 
@@ -86,12 +89,17 @@ async function generate(howMany: number){
         
         let sections: Section[] = generateSection(figures, titles, howMany, text_raw);
 
+        if( doc_gen[index].keywords.length == 0) {
+            console.log("questo è vuoto")
+        }
+
         let doc: Article = {
             "id": index,
             "title": doc_gen[index].title,
             "abstract": doc_gen[index].abstract,
             "metadata": {
                 "creation_date": doc_gen[index].creation_date,
+                "keywords": (doc_gen[index].keywords ?? "" ).split(" ")
             },
             "authors": authors,
             "publication_details": publishers,
