@@ -5,7 +5,7 @@ interface Article
     "abstract": string
     "authors": Author[],
     "metadata": {
-        "creation_date": Date | undefined,
+        "creation_date": MongoDate | undefined,
         "keywords": string[]
     },
     "publication_details": Publisher[],
@@ -27,7 +27,7 @@ interface Publisher {
     "journal": string,
     "volume": string | undefined,
     "number": number,
-    "date": Date | undefined,
+    "date": MongoDate | undefined,
     "pages": number | undefined
 }
 
@@ -47,4 +47,9 @@ interface Figure
     "url": URL,
     "caption": string | undefined
     "inserted_at": number
+}
+
+interface MongoDate
+{
+    "$date": string
 }

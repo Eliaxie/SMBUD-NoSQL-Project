@@ -81,7 +81,7 @@ async function generate(howMany: number){
                 journal: pub.journal,
                 volume: pub.volume,
                 number: pub.number,
-                date: pub.date,
+                date: pub.date != undefined ? { "$date": new Date(pub.date).toISOString() } : undefined,
                 pages: pub.pages
             }
             publishers.push(publisher)
@@ -98,7 +98,7 @@ async function generate(howMany: number){
             "title": doc_gen[index].title,
             "abstract": doc_gen[index].abstract,
             "metadata": {
-                "creation_date": doc_gen[index].creation_date,
+                "creation_date": doc_gen[index].creation_date != undefined ? { "$date": new Date(doc_gen[index].creation_date).toISOString() } : undefined,
                 "keywords": (doc_gen[index].keywords ?? "" ).split(" ")
             },
             "authors": authors,
