@@ -81,7 +81,7 @@ async function generate(howMany: number){
                 journal: pub.journal,
                 volume: pub.volume,
                 number: pub.number,
-                date: pub.date != undefined ? { "$date": new Date(pub.date).toISOString() } : undefined,
+                date: pub.date != undefined ? { "$date": new Date().toISOString() } : undefined,
                 pages: pub.pages
             }
             publishers.push(publisher)
@@ -93,12 +93,22 @@ async function generate(howMany: number){
             console.log("questo è vuoto")
         }
 
+        var creation_date = doc_gen[index].creation_date != undefined ? { "$date": new Date(doc_gen[index].creation_date).toISOString() } : undefined;
+
+        for (let e = 0; e < publishers.length; e++) {
+            if(creation_date == undefined){
+                publishers[e].date = publishers[e].date != undefined ? { "$date": getRandomDate(new Date(0), new Date()).toISOString() } : undefined
+            } else {
+                publishers[e].date = publishers[e].date != undefined ? { "$date": getRandomDate(new Date(creation_date.$date), new Date()).toISOString() } : undefined
+            }
+        }
+
         let doc: Article = {
             "id": index,
             "title": doc_gen[index].title,
             "abstract": doc_gen[index].abstract,
             "metadata": {
-                "creation_date": doc_gen[index].creation_date != undefined ? { "$date": new Date(doc_gen[index].creation_date).toISOString() } : undefined,
+                "creation_date": creation_date,
                 "keywords": (doc_gen[index].keywords ?? "" ).split(" ")
             },
             "authors": authors,
@@ -106,6 +116,7 @@ async function generate(howMany: number){
             "sections": sections,
             "bibliography": []
         };
+
         documents.push(doc);
     }
     for (let index = 0; index < howMany; index++) {
@@ -124,6 +135,19 @@ async function generate(howMany: number){
 function getRandomInt(max: number) {
     const buf = crypto.randomInt(max);
     return buf
+}
+
+function getRandomDate(start: Date | undefined, end: Date | undefined){
+    function randomValueBetween(min: number, max: number) {
+      return getRandomInt(max - min) + min;
+    }
+    var start_date = new Date(start ?? 0)
+    var end_date = new Date(end ?? new Date())
+    if(start_date.getTime() > end_date.getTime()) {
+        console.log("start cannot be > end", start, end)
+        throw new Error();
+    }
+    return new Date(randomValueBetween(start_date.getTime(), end_date.getTime()))
 }
 
 function generateSubsectionRecursive(figures_data: any, titles: any, text_raw: string[], howMany: number, probability_to_continue: number, level: number): SectionBody[] | undefined {
