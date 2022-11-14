@@ -1,0 +1,9 @@
+use('project') // use(<db_name>)
+// Find authors' name and email address of publications of Ave Maria University
+db.articles.find({ // db.<collection_name>.find({
+    'publication_details.journal': 'Ave Maria University',
+    },
+    { 
+    '_id' : 0,'title' : 1,'authors.first_name': 1, 'authors.last_name': 1, 'authors.email' : 1
+    } 
+    )

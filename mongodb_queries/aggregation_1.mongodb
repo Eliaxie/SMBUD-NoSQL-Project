@@ -1,0 +1,30 @@
+use("project")
+// Show the top 3 most recent publication on a journal with at least 100 pages
+db.articles.aggregate([
+    {
+      $match: {}
+    },
+    {
+    $unwind: {
+      path: '$publication_details'
+    }
+    },
+    {
+    $match: {
+      'publication_details.pages' : {$gte: 100}
+    }},
+    {
+    $project: {
+      _id : 1,
+      'publication_details.date':1,
+      'title' : 1,
+      'publication_details.pages' : 1
+    }},{
+    $sort: {
+      'publication_details.date': -1
+    }
+  },
+  {
+  $limit: 3
+  }
+])
