@@ -1,0 +1,15 @@
+// 1. Find all articles with at least N authors that also reference at least Y other articles
+
+db.articles.find({$and: [
+	{ $expr: { $gte: [ { $size: '$authors' }, 7 ] }},
+	{ $expr: { $gte: [ { $size: '$bibliography' }, 19 ] }}
+	]
+})
+
+// 2. Find all articles that were written after a certain date or contain a certain keyword
+
+db.articles.find({$or: [
+	{ 'metadata.keywords': 'Virtual'},
+	{ 'metadata.creation_date': { $gt: ISODate('2000-01-01T07:31:02.000Z') }}
+	]
+})
