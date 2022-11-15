@@ -1,0 +1,34 @@
+use('project')
+/*
+Find the first article belonging to the field 'system' by sorting in ascending order wrt creation_date
+and return it with the list of every other articles written at least one year after it
+*/
+db.articles.aggregate([
+    {
+        $match: {
+          'metadata.keywords' : 'system',
+          'metadata.creation_date' : {$exists : true}
+        }
+    },
+    {
+        $sort: {
+            'metadata.creation_date': 1
+        }
+    },
+    {
+        $limit: 1
+    },
+    {
+        $project: {
+            'metadata.creation_date' : 1,
+            'metadata.keywords' : 1
+        }
+    }
+    ])
+
+db.articles.find({
+    $and : [{'metadata.keywords' : 'system'},
+    {'metadata.creation_date' : {$exists : true}},
+    {'metadata.creation_date' : {$gte : ISODate('1982-11-15T17:42:15Z')}}]},
+    {'title' : 1,'metadata' : 1}
+).sort('metadata.creation_date', 1)
