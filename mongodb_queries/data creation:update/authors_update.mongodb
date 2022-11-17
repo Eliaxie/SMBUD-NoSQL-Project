@@ -1,0 +1,12 @@
+use('project')
+// update authors deleting null fields
+
+db.authors.updateMany({
+    $and : [{'bio' : null},
+            { 'affiliation' : null}]
+    },
+    {
+        $unset: {'bio' : 1, 'affiliation' : 1}
+    }
+
+)

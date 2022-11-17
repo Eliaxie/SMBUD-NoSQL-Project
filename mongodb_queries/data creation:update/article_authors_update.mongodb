@@ -1,0 +1,24 @@
+use('project')
+// update article by leaving only authors reference
+/*
+db.articles.aggregate(
+    {
+    $unwind: {
+      path: '$authors'
+    }
+    },{
+    $project: {
+        'authors' : 1}
+    }
+)
+*/
+
+db.articles.updateMany({ }, { 
+    $unset: { 
+        'authors.$[].affiliation': 1,
+        'authors.$[].bio': 1,
+        'authors.$[].first_name': 1,
+        'authors.$[].last_name': 1,
+        'authors.$[].email': 1
+    } 
+})

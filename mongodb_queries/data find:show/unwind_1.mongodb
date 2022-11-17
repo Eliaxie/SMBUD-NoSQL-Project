@@ -18,7 +18,8 @@ db.articles.aggregate([
       _id : 1,
       'publication_details.date':1,
       'title' : 1,
-      'publication_details.pages' : 1
+      'publication_details.pages' : 1,
+      'publication_details.journal' : 1
     }},{
     $sort: {
       'publication_details.date': -1

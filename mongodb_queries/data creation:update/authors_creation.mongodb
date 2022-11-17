@@ -1,0 +1,40 @@
+use('project')
+/*
+// individual authors
+db.articles.aggregate([
+    {
+    $unwind: {
+      path: '$authors',
+    }},
+    {
+      $group: {
+        _id: '$authors.id'
+        // ,count : {$sum : 1}
+      }
+    },
+    {
+      $count : 'count'
+    }
+])
+*/
+
+db.articles.aggregate([
+    {
+    $unwind: {
+      path: '$authors',
+    }},
+    {
+      $group: {
+        _id: '$authors.id',
+        'affiliation' : {$first : '$authors.affiliation'},
+        'bio' :         {$first :         '$authors.bio'},
+        'email' :       {$first :       '$authors.email'},
+        'first_name' :  {$first :  '$authors.first_name'} ,
+        'last_name' :   {$first :   '$authors.last_name'}
+      }
+    },
+    {
+      $out : 'authors'
+    }
+    
+])
