@@ -1,0 +1,33 @@
+
+-Find fist name and last name about the authors that have written "Amphibolurus barbatus"
+db.article.find(
+  {"title": "Amphibolurus barbatus"},
+  {"authors.first_name"   :true,
+   "authors.last_name":true,
+   "_id"     :false}
+);
+
+-Find how many authors write book there are in the system.
+db.article.aggregate ([
+  {
+   "$match": {
+      "$expr": {
+        "$gte": [
+          {
+            "$size": "$authors"
+            }, 1
+          ]
+        }
+      }
+    }, {
+      
+    "$count": "numOfAuthors"
+ }
+])
+
+-Find all authors who have wrote 56 pages 
+db.article.find (
+{ "publication_details.pages" : 56} , 
+{"authors.firs_name": true,
+"authors.last_name":true,
+"_id"     :false}) ;
