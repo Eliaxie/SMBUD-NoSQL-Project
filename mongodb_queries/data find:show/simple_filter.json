@@ -1,0 +1,6 @@
+-Find all authors who have wrote 56 pages 
+db.article.find (
+{ "publication_details.pages" : 56} , 
+{"authors.firs_name": true,
+"authors.last_name":true,
+"_id"     :false}) ;
