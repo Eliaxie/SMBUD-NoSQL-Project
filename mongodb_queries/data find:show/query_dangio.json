@@ -31,3 +31,22 @@ db.article.find (
 {"authors.firs_name": true,
 "authors.last_name":true,
 "_id"     :false}) ;
+
+
+-Create a new document in our collection
+db.article.insertOne(
+{ "_id": "63761c9b544a1a0c6ff595ee"},
+{ "id": "1"},
+{ "titile": "Emotional Intelligence"},
+{ "abstract": "The past decade brought a surge of research into the biology of personality and emotion.
+Based on these studies, we can conclude that at least a portion of our intelligence
+and personality are determined by genetics. But this raises the question: What can we
+change? Why do some intelligent people founder in life, while less intelligent people
+prosper? The answer lies with a set of abilities called emotional intelligence (EI)."},
+{ "metadata.authors.id": "102"},
+{ "metadata.authors.first_name": "Daniel"},
+{ "metadata.authors.last_name": "Goleman"},
+
+
+
+)
