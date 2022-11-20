@@ -1,0 +1,45 @@
+/*
+Find authors id who have more than 140 publications
+*/
+db.articles.aggregate([
+   {
+      "$unwind":{
+         "path":"$authors"
+      }
+   },
+   {
+      "$group":{
+         "_id":"$authors.id",
+         "first_name":{
+            "$addToSet":"$authors.first_name"
+         },
+         "last_name":{
+            "$addToSet":"$authors.last_name"
+         },
+         "publications":{
+            "$push":"$publication_details.id"
+         }
+      }
+   },
+   {
+      "$project":{
+         "publications":{
+            "$reduce":{
+               "input":"$publications",
+               "initialValue":[
+                  
+               ],
+               "in":{
+                  "$concatArrays":[
+                     "$$value",
+                     "$$this"
+                  ]
+               }
+            }
+         },
+	"first_name":"$first_name",
+	"last_name":"$last_name",
+      }
+   },
+{$match: {$expr:{$gt:[{$size:"$publications"}, 140]}}}
+])

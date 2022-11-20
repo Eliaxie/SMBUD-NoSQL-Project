@@ -1,0 +1,23 @@
+/*
+Find all authors co-publisher with author_id: 1
+*/
+db.articles.aggregate([
+   { $match: { "authors.id": 1 } },
+   {
+      "$unwind":{
+         "path":"$authors"
+      }
+   },
+   {
+      "$group":{
+         "_id":"$authors.id",
+         "first_name":{
+            "$addToSet":"$authors.first_name"
+         },
+         "last_name":{
+            "$addToSet":"$authors.last_name"
+         }
+      }
+   },
+	{ $match: { "_id": { $ne: 1 } } },
+ ])
