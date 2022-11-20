@@ -1,0 +1,45 @@
+use('db')
+
+/*
+Find authors that are referenced by author id 1
+ */
+db.articles.aggregate( [
+{ $match: { "authors.id": 1 } },
+   {
+     $lookup:
+       {
+         from: "articles",
+         localField: "bibliography",
+         foreignField: "id",
+         as: "references"
+       }
+  },
+  {
+        "$project":{
+            "_id":"$_id",
+            "bibliography":"$bibliography",
+            "references":"$references",
+      }
+   },
+   {
+      "$unwind":{
+         "path":"$references"
+      }
+   },
+   {
+      "$group":{
+         "_id":"$references.authors.id"
+      }
+   },
+   {
+      "$unwind":{
+         "path":"$_id"
+      }
+   },
+   {
+      "$group":{
+         "_id":"$_id"
+      }
+   },
+   
+] )
