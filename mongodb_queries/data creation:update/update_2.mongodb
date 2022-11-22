@@ -1,0 +1,10 @@
+use('project')  
+// Add the keyword 'Recent' for every article written after the beginning of 2022
+
+db.articles.updateMany(
+   { "metadata.creation_date" : {$gt : ISODate('2022-01-01T22:48:12.980+00:00') } },
+   { 
+      $push:
+      {"metadata.keywords": 'recent'}
+   }
+)
