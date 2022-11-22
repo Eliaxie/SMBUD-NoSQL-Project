@@ -1,0 +1,25 @@
+use('project')
+// Count the total number of figures for the most recent publication
+db.articles.aggregate([
+  {
+  $sort: {
+    'metadata.creation_date': -1
+  }},
+  {
+  $limit: 1
+  },
+  { $unwind: "$sections" },
+  {
+    $project: {
+      'metadata.creation_date' : 1,
+      title : 1,
+      numberOfFigures: {
+        $cond: {
+          if: { $isArray: "$sections.figures" },
+          then: { $size: "$sections.figures" },
+          else: 0
+        }
+      }
+    }
+  }
+])
