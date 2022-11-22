@@ -1,4 +1,5 @@
 **:Zone.Identifier
+**.identifier
 dataset/entire_dataset/output_article.csv
 dataset/entire_dataset/output_article.zip
 dataset/entire_dataset/output_author_authored_by.csv

@@ -183,7 +183,7 @@ function generateSection(figures_data: any, titles: any, howMany: number, text_r
     for (let index = 0; index < num_sections; index++) {
         let section: Section = {
             "body_text": {
-                "title": titles[getRandomInt(howMany)],
+                "title": titles[getRandomInt(howMany)].title,
                 "text": text_raw[getRandomInt(howMany)].split("  "),
                 "sub_section": generateSubsectionRecursive(figures_data, titles, text_raw, howMany, 0.5, 1)
             },
