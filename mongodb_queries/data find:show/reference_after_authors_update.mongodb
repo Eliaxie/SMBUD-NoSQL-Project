@@ -1,0 +1,28 @@
+use('project')
+// Find the first article published for each author
+
+db.authors.aggregate([
+   {
+      $lookup: {
+        from: 'articles',
+        localField: '_id',
+        foreignField: 'authors.id',
+        as: 'a_authors',
+        pipeline : [
+         {$sort : { 'metadata.creation_date' : -1}},
+         {$limit : 1}
+        ]
+      }
+   },
+  {
+        $project:{
+            _id:"$_id",
+            'first_name' : '$first_name',
+            'last_name' : '$last_name',
+            'email' : '$email',
+            'article' : "$a_authors.title",
+            'creation_date' : "$a_authors.metadata.creation_date"
+      }
+  }
+
+])
