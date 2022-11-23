@@ -1,0 +1,57 @@
+use('project')
+// For every document compute the number of sections and subsections 
+
+db.articles.aggregate([
+    {
+    $project: {
+      'title' : 1,
+      'sections' : 1,
+      total_sections : {
+        $cond: {
+          if: { $isArray: "$sections" },
+          then: { $size: "$sections" },
+          else: 0
+          }
+        }
+    }},
+    {
+    $unwind: {
+      path: '$sections'
+    }},
+    {
+    $match: {
+    'sections.body_text.sub_section' : {$exists : true}
+    }},
+    {
+    $project: {
+      'title' : 1,
+      total_sections : 1,
+      nsub_sections : {
+        $cond: {
+          if: { $isArray: "$sections.body_text.sub_section" },
+          then: { $size: "$sections.body_text.sub_section" },
+          else: 0
+          }
+        }
+    }}
+    ,{
+      $group: {
+        _id: {
+          title : '$title',
+          'total_sections' : '$total_sections'
+        },
+        'total_sub_sections': {
+          $sum: '$nsub_sections'
+        }
+      }
+    },
+    {
+      $project: {
+        'title' : 1,
+        'total_sections' : 1,
+        'total_sub_sections' : 1
+      }
+    }
+
+])
+
