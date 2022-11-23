@@ -1,0 +1,21 @@
+use('db')  
+// Create collection of publisher with references to each article published in it
+
+db.articles.aggregate([
+    {
+    $unwind: {
+      path: '$publication_details',
+    }},
+    {
+      $group: {
+        _id: '$publication_details.id',
+        'journal' : {$first : '$publication_details.journal'},
+        'published':{
+            $addToSet:'$id'
+         },
+      }
+    },
+    {
+      $out : 'publishers'
+    }
+])
