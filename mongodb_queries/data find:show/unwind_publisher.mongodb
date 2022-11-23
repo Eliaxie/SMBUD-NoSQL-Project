@@ -1,0 +1,27 @@
+use('db')
+/*
+Find the favorite publisher
+*/
+db.articles.aggregate([
+    {
+      "$unwind":{
+         "path":"$publication_details"
+      }
+   },
+   {
+      "$group":{
+         "_id":"$publication_details.id",
+         "publications":{
+            "$sum":"$id"
+         }
+      }
+   },
+   {
+    $sort: {
+      publications: -1
+    }
+   },
+   {
+   $limit: 1
+   }
+])

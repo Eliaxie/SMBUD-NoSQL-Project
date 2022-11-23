@@ -1,4 +1,4 @@
-use('project')
+use('db')
 /*
 Find the first article belonging to the field 'system' by sorting in ascending order wrt creation_date
 and return it with the list of every other articles written at least one year after it
