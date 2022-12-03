@@ -12,3 +12,7 @@ dataset/.DS_Store
 *.docx#
 **node_modules/
 **dist/
+spark/.ipynb_checkpoints/spark-checkpoint.ipynb
+spark/.ipynb_checkpoints/create_csv-checkpoint.ipynb
+spark/.ipynb_checkpoints/spark-checkpoint.ipynb
+spark/.ipynb_checkpoints/spark-checkpoint.ipynb
