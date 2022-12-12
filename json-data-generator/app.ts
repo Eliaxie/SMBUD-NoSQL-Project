@@ -124,7 +124,9 @@ async function generate(howMany: number){
         for (let e = 0; e < references; e++) {
             let range = Math.floor(howMany / 20)
             let low_bound = e * range;
-            documents[index].bibliography.push(documents[low_bound + getRandomInt(range)].id);
+            const ref = documents[low_bound + getRandomInt(range)].id;
+            if(ref != index)
+                documents[index].bibliography.push(ref);
         }
     }
     var writeStream = fs.createWriteStream("documents.json");
